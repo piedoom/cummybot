@@ -4,3 +4,24 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+serenity = "0.12.5"
+bevy = { version = "0.18", features = ["debug", "trace"], default-features = false}
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1.89"
+sqlx = { version = "0.8.6", default-features = false, features = ["sqlite"] }
+booru = "0.7.0"
+
+[lints.clippy]
+double-parens = "allow"
+# Make sure macros use their standard braces, such as `[]` for `bevy_ecs::children!`.
+nonstandard_macro_braces = "warn"
+# Bevy supplies arguments to systems via dependency injection, so it's natural for systems to
+# request more than 7 arguments, which would undesirably trigger this lint.
+too_many_arguments = "allow"
+# Queries may access many components, which would undesirably trigger this lint.
+type_complexity = "allow"
+
+[lints.rust]
+# Mark `bevy_lint` as a valid `cfg`, as it is set when the Bevy linter runs.
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(bevy_lint)"] }
+unused_parens = "allow"
