@@ -1,3 +1,5 @@
+// ✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠ //
+
 use bevy::prelude::*;
 use dotenvy as dotenby;
 use serenity::{
@@ -5,31 +7,48 @@ use serenity::{
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
+use strum::EnumString;
 use tokio::task::JoinHandle;
 
 use crate::runtime::AsyncRuntime;
 
-pub(super) fn plugin(app: &mut bevy::prelude::App) {
-    app.add_systems(Startup, init_discord_client);
+pub(crate) fn plugin(app: &mut bevy::prelude::App) {
+    app.add_systems(Startup, init_discord_client)
+        .add_systems(Update, send_events)
+        .add_message::<Cummand>();
 }
 
+const MAX_MESSAGE_COUNT: usize = 1024;
+
 fn init_discord_client(mut commands: Commands, runtime: Res<AsyncRuntime>) {
-    let client = runtime.block_on(async {
+    let (client, receiver) = runtime.block_on(async move {
         let token = dotenby::var("TOKEN").unwrap();
 
         let intents = GatewayIntents::GUILD_MESSAGES
             | GatewayIntents::DIRECT_MESSAGES
             | GatewayIntents::MESSAGE_CONTENT;
 
-        Client::builder(&token, intents)
-            .event_handler(Handler)
-            .await
-            .unwrap()
+        let (sender, receiver) = crossbeam_channel::bounded(MAX_MESSAGE_COUNT);
+
+        (
+            Client::builder(&token, intents)
+                .event_handler(Handler { queue: sender })
+                .await
+                .unwrap(),
+            receiver,
+        )
     });
 
     let handle = runtime.spawn(run_client(client));
 
-    commands.insert_resource(DiscordClient { handle })
+    commands.insert_resource(DiscordClient { handle });
+    commands.insert_resource(Cummands(receiver));
+}
+
+fn send_events(mut reader: ResMut<Cummands>, mut writer: MessageWriter<Cummand>) {
+    for cummand in reader.0.try_recv() {
+        writer.write(cummand);
+    }
 }
 
 async fn run_client(mut client: serenity::prelude::Client) {
@@ -39,12 +58,17 @@ async fn run_client(mut client: serenity::prelude::Client) {
 }
 
 #[derive(Resource)]
-pub struct DiscordClient {
+pub(crate) struct Cummands(crossbeam_channel::Receiver<Cummand>);
+
+#[derive(Resource)]
+struct DiscordClient {
     #[expect(unused)]
     handle: JoinHandle<()>,
 }
 
-pub struct Handler;
+struct Handler {
+    queue: crossbeam_channel::Sender<Cummand>,
+}
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -74,4 +98,14 @@ impl EventHandler for Handler {
         println!("{} is connected!", ready.user.name);
         println!("my ass is ready");
     }
+}
+
+#[derive(EnumString, Message)]
+#[strum(serialize_all = "snake_case")]
+enum Cummand {
+    Ping,
+}
+
+fn baby_shoes() {
+    println!("for sale")
 }
