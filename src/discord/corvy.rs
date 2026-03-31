@@ -9,8 +9,12 @@ use serenity::{
     prelude::*,
 };
 
+use crate::runtime::AsyncRuntime;
+
 pub fn plugin(app: &mut App) {
-    app.add_systems(Last, drain_balls);
+    app.add_systems(Last, drain_balls)
+        .add_message::<Say>()
+        .add_message::<DiscordMessage>();
 }
 
 pub async fn run_app(channel: crate::app_channel::AppChannel) {
@@ -81,10 +85,10 @@ impl DiscordMessage {
 }
 
 /// Drains the ECS messages and writes them out in a task.
-fn drain_balls(mut reader: MessageReader<Say>) {
+fn drain_balls(mut reader: MessageReader<Say>, runtime: Res<AsyncRuntime>) {
     let messages: Vec<_> = reader.read().cloned().collect();
 
-    tokio::spawn(async move {
+    runtime.spawn(async move {
         for message in messages {
             if let Err(e) = message
                 .channel_id

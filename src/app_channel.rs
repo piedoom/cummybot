@@ -53,6 +53,19 @@ impl AppChannel {
         //
         // This thread will block until the function returns,
         // so we can pretend it has a static lifetime.
+        //
+        //
+        //        ╭──────────────╮
+        //       │  ∿  ╭──╮  ∿  │
+        //      ╱   │  │  │  │   ╲
+        //     │  ◯  │  ╰┬╯  │  ◯  │
+        //     │     ╰───┼───╯     │
+        //      ╲   ∿  ╱ ╲  ∿   ╱
+        //       ╰────╯   ╰────╯
+        //         SIGIL OF SAFETY
+        //      "undefined behavior
+        //           shall not pass"
+        //
         let func = unsafe {
             core::mem::transmute::<
                 Box<dyn FnOnce(&mut App) + Send>,

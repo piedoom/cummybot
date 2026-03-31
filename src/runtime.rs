@@ -1,35 +1,62 @@
 // ✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠ //
 
+// ~~PRESERVED FOR ARCHIEOLOGICAL PURPOSES~~ RESTORED
+//
+// ░░░░░░░
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░▀░░░
+//
+// ░░░░░░░
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░▀░░░
+//
+// ░░░░░░░
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░▀░░░
+
+use std::sync::Arc;
+
 use bevy::prelude::*;
 use tokio::{runtime::Runtime, task::JoinHandle};
 
 #[derive(Resource)]
-pub struct AsyncRuntime {
-    rt: Runtime,
+pub(crate) struct AsyncRuntime {
+    runtime: Arc<Runtime>,
 }
 
+// DOOMY'S IMPL BLOCK
+impl AsyncRuntime {
+    pub(crate) fn new(runtime: Arc<Runtime>) -> Self {
+        Self { runtime }
+    }
+}
+
+// NOT DOOMY'S (CORVY'S( IMPL BLOCK
 impl AsyncRuntime {
     pub fn spawn<F>(&self, future: F) -> JoinHandle<F::Output>
     where
         F: Future + Send + 'static,
         F::Output: Send + 'static,
     {
-        self.rt.spawn(future)
+        self.runtime.spawn(future)
     }
 
     pub fn block_on<F>(&self, future: F) -> F::Output
     where
         F: Future,
     {
-        self.rt.block_on(future)
+        self.runtime.block_on(future)
     }
-}
-
-pub(super) fn plugin(app: &mut App) {
-    let mut builder = tokio::runtime::Builder::new_multi_thread();
-    let runtime = builder.enable_all().build().unwrap();
-
-    let runtime = AsyncRuntime { rt: runtime };
-
-    app.insert_resource(runtime);
 }

@@ -1,8 +1,10 @@
 // ✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠═══════════✠ஜ۩✠۩ஜ✠ //
 
+use std::sync::Arc;
+
 use bevy::prelude::*;
 use dotenvy as dotenby;
-use tracing_subscriber::{fmt, prelude::*};
+use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 mod app_channel;
 mod discord;
@@ -60,21 +62,35 @@ fn _hi_corwvy() {
 // _______|_?Sex
 // _______|__?Sex
 
-use crate::app_channel::AppChannel;
+use crate::{app_channel::AppChannel, runtime::AsyncRuntime};
 
 fn main() {
     tracing_subscriber::registry()
-        .with(fmt::layer().with_file(true).with_line_number(true))
+        .with(
+            fmt::layer()
+                .with_file(true)
+                .with_line_number(true)
+                .with_filter(EnvFilter::new("info,tokio=error")),
+        )
         .init();
 
     dotenby::dotenv().unwrap();
+
+    let builder = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .expect("Failed building the Runtime");
+
+    let penis = Arc::new(builder);
+    let second_penis = penis.clone();
 
     let body = async move {
         let channel = AppChannel::new(|| {
             let mut app = App::new();
 
             app.add_plugins((jerk::plugin, discord::corvy::plugin))
-                .set_error_handler(bevy::ecs::error::error);
+                .set_error_handler(bevy::ecs::error::error)
+                .insert_resource(AsyncRuntime::new(second_penis));
 
             app.update();
 
@@ -84,11 +100,7 @@ fn main() {
         discord::corvy::run_app(channel).await
     };
 
-    tokio::runtime::Builder::new_multi_thread()
-        .enable_all()
-        .build()
-        .expect("Failed building the Runtime")
-        .block_on(body)
+    penis.block_on(body);
 }
 
 // ░░░░░░░
@@ -106,6 +118,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -121,6 +134,31 @@ fn main() {
 // ░░░████████░░░░
 // ░░░███░
 // ░░░▀░░░
+
+// ░░░░░░░
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░▀▀█▀▀░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░▀░░░
+
+// ░░░░░░░
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░▀░░░
+// ░░░░░░░
+
+// ░░░█░░░
+// ░▀▀█▀▀░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░█░░░
+// ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -136,6 +174,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -151,6 +190,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -166,6 +206,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -181,6 +222,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -196,6 +238,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -211,6 +254,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -226,6 +270,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -241,6 +286,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -256,6 +302,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -271,6 +318,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -286,6 +334,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -301,6 +350,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -316,6 +366,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
+
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
@@ -331,13 +382,6 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
-// ░░░░░░░
-// ░░░█░░░
-// ░▀▀█▀▀░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░▀░░░
 
 // ░░░░░░░
 // ░░░█░░░
@@ -346,21 +390,7 @@ fn main() {
 // ░░░█░░░
 // ░░░█░░░
 // ░░░▀░░░
-// ░░░░░░░
-// ░░░█░░░
-// ░▀▀█▀▀░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░▀░░░
 
-// ░░░░░░░
-// ░░░█░░░
-// ░▀▀█▀▀░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░█░░░
-// ░░░▀░░░
 // ░░░░░░░
 // ░░░█░░░
 // ░▀▀█▀▀░
