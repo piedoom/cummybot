@@ -5,11 +5,15 @@ edition = "2024"
 
 [dependencies]
 serenity = "0.12.5"
-bevy = { version = "0.18", features = ["debug", "trace"], default-features = false}
+bevy = { version = "0.18", features = [
+    "debug",
+    "trace",
+], default-features = false }
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1.89"
 sqlx = { version = "0.8.6", default-features = false, features = ["sqlite"] }
 booru = "0.7.0"
+dotenvy = "0.15.7"
 
 [lints.clippy]
 double-parens = "allow"

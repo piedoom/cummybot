@@ -15,7 +15,10 @@ impl AsyncRuntime {
         self.rt.spawn(future)
     }
 
-    pub fn block_on<F>(&self, future: F) -> F::Output {
+    pub fn block_on<F>(&self, future: F) -> F::Output
+    where
+        F: Future,
+    {
         self.rt.block_on(future)
     }
 }

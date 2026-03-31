@@ -1,4 +1,5 @@
-use bevy::ecs::resource::Resource;
+use bevy::prelude::*;
+use dotenvy as dotenby;
 use serenity::{
     async_trait,
     model::{channel::Message, gateway::Ready},
@@ -14,8 +15,7 @@ pub(super) fn plugin(app: &mut bevy::prelude::App) {
 
 fn init_discord_client(mut commands: Commands, runtime: Res<AsyncRuntime>) {
     let client = runtime.block_on(async {
-        let token = "put ur api key in plain text here and the three letters on the back";
-        let token = "mpf :3";
+        let token = dotenby::var("TOKEN").unwrap();
 
         let intents = GatewayIntents::GUILD_MESSAGES
             | GatewayIntents::DIRECT_MESSAGES
@@ -32,14 +32,15 @@ fn init_discord_client(mut commands: Commands, runtime: Res<AsyncRuntime>) {
     commands.insert_resource(DiscordClient { handle })
 }
 
-async fn run_client(client: serenity::prelude::Client) {
-    if let Err(im_bout_takum) = client.start.await {
-        panic!("came");
+async fn run_client(mut client: serenity::prelude::Client) {
+    if let Err(im_bout_takum) = client.start().await {
+        panic!("came: {im_bout_takum}");
     }
 }
 
 #[derive(Resource)]
 pub struct DiscordClient {
+    #[expect(unused)]
     handle: JoinHandle<()>,
 }
 

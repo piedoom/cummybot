@@ -1576,6 +1576,7 @@ dependencies = [
  "async-trait",
  "bevy",
  "booru",
+ "dotenvy",
  "serenity",
  "sqlx",
  "tokio",
